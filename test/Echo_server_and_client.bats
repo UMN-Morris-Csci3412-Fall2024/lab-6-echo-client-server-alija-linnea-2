@@ -2,10 +2,10 @@
 
 setup() {
   BATS_TMPDIR=$(mktemp --directory)
-  cd ../src
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/src
   rm -f echoserver/*.class
-  javac echoserver/*.java
-  java echoserver.EchoServer &
+  javac -d ../bin echoserver/*.java
+  java -cp ../bin echoserver.EchoServer &
   sleep 1  # Allow the server to start up
   cd ../test
 }
@@ -13,33 +13,29 @@ setup() {
 teardown() {
   rm -rf "$BATS_TMPDIR"
   kill %1
-  # Ensure that the server shuts down completely before moving on
-  sleep 1
+  sleep 1  # Ensure the server shuts down completely
 }
 
 @test "Your client/server pair handles a small bit of text" {
-  cd ../src
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoClient < ../test/etc/textTest.txt > "$BATS_TMPDIR"/textTest.txt
   run diff ../test/etc/textTest.txt "$BATS_TMPDIR"/textTest.txt
   cd ../test
-
   [ "$status" -eq 0 ]
 }
 
 @test "Your client/server pair handles a large chunk of text" {
-  cd ../src
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoClient < ../test/etc/words.txt > "$BATS_TMPDIR"/words.txt
   run diff ../test/etc/words.txt "$BATS_TMPDIR"/words.txt
   cd ../test
-
   [ "$status" -eq 0 ]
 }
 
 @test "Your client/server pair handles binary content" {
-  cd ../src
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoClient < ../test/etc/pumpkins.jpg > "$BATS_TMPDIR"/pumpkins.jpg
   run diff ../test/etc/pumpkins.jpg "$BATS_TMPDIR"/pumpkins.jpg
   cd ../test
-
   [ "$status" -eq 0 ]
 }

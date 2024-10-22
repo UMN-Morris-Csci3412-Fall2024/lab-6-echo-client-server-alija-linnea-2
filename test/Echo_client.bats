@@ -2,7 +2,7 @@
 
 setup() {
   BATS_TMPDIR=$(mktemp --directory)
-  cd ../src
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/src
   rm -f echoserver/*.class
   javac -d ../bin echoserver/*.java
   java -cp ../bin echoserver.EchoServer &
@@ -17,7 +17,7 @@ teardown() {
 }
 
 @test "Your client code compiles" {
-  cd ../src
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/src
   rm -f echoserver/EchoClient.class
   run javac -d ../bin echoserver/EchoClient.java
   cd ../test
@@ -25,7 +25,7 @@ teardown() {
 }
 
 @test "Your client runs successfully" {
-  cd ../bin
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoClient < ../test/etc/textTest.txt
   status=$?
   cd ../test
@@ -33,7 +33,7 @@ teardown() {
 }
 
 @test "Your client handles a small bit of text" {
-  cd ../bin
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoClient < ../test/etc/textTest.txt > "$BATS_TMPDIR"/textTest.txt
   run diff ../test/etc/textTest.txt "$BATS_TMPDIR"/textTest.txt
   cd ../test
@@ -41,7 +41,7 @@ teardown() {
 }
 
 @test "Your client handles a large chunk of text" {
-  cd ../bin
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoClient < ../test/etc/words.txt > "$BATS_TMPDIR"/words.txt
   run diff ../test/etc/words.txt "$BATS_TMPDIR"/words.txt
   cd ../test
@@ -49,7 +49,7 @@ teardown() {
 }
 
 @test "Your client handles binary content" {
-  cd ../bin
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoClient < ../test/etc/pumpkins.jpg > "$BATS_TMPDIR"/pumpkins.jpg
   run diff ../test/etc/pumpkins.jpg "$BATS_TMPDIR"/pumpkins.jpg
   cd ../test

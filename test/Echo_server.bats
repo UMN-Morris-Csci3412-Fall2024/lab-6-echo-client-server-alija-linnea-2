@@ -9,15 +9,15 @@ teardown() {
 }
 
 @test "Your server code compiles" {
-  cd ../src
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/src
   rm -f echoserver/EchoServer.class
-  run javac echoserver/EchoServer.java
+  run javac -d ../bin echoserver/EchoServer.java
   cd ../test
   [ "$status" -eq 0 ]
 }
 
 @test "Your server starts successfully" {
-  cd ../src
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoServer &
   status=$?
   kill %1
@@ -26,49 +26,34 @@ teardown() {
 }
 
 @test "Your server handles a small bit of text" {
-  cd ../src
-  rm -f echoserver/*.class
-  javac echoserver/EchoServer.java
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoServer &
-  sleep 1
-  cd ../test
-
-  cd sampleBin
-  java echoserver.EchoClient < ../etc/textTest.txt > "$BATS_TMPDIR"/textTest.txt
-  run diff ../etc/textTest.txt "$BATS_TMPDIR"/textTest.txt
-  cd ../..
+  sleep 1  # Allow server to start
+  java echoserver.EchoClient < ../test/etc/textTest.txt > "$BATS_TMPDIR"/textTest.txt
+  run diff ../test/etc/textTest.txt "$BATS_TMPDIR"/textTest.txt
   kill %1
+  cd ../test
   [ "$status" -eq 0 ]
 }
 
 @test "Your server handles a large chunk of text" {
-  cd ../src
-  rm -f echoserver/*.class
-  javac echoserver/EchoServer.java
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoServer &
-  sleep 1
-  cd ../test
-
-  cd sampleBin
-  java echoserver.EchoClient < ../etc/words.txt > "$BATS_TMPDIR"/words.txt
-  run diff ../etc/words.txt "$BATS_TMPDIR"/words.txt
-  cd ../..
+  sleep 1  # Allow server to start
+  java echoserver.EchoClient < ../test/etc/words.txt > "$BATS_TMPDIR"/words.txt
+  run diff ../test/etc/words.txt "$BATS_TMPDIR"/words.txt
   kill %1
+  cd ../test
   [ "$status" -eq 0 ]
 }
 
 @test "Your server handles binary content" {
-  cd ../src
-  rm -f echoserver/*.class
-  javac echoserver/EchoServer.java
+  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
   java echoserver.EchoServer &
-  sleep 1
-  cd ../test
-
-  cd sampleBin
-  java echoserver.EchoClient < ../etc/pumpkins.jpg > "$BATS_TMPDIR"/pumpkins.jpg
-  run diff ../etc/pumpkins.jpg "$BATS_TMPDIR"/pumpkins.jpg
-  cd ../..
+  sleep 1  # Allow server to start
+  java echoserver.EchoClient < ../test/etc/pumpkins.jpg > "$BATS_TMPDIR"/pumpkins.jpg
+  run diff ../test/etc/pumpkins.jpg "$BATS_TMPDIR"/pumpkins.jpg
   kill %1
+  cd ../test
   [ "$status" -eq 0 ]
 }
