@@ -1,42 +1,39 @@
 #!/usr/bin/env bats
 
 setup() {
-  BATS_TMPDIR=$(mktemp --directory)
-  cd ../src || exit 1
-  rm -f echoserver/*.class
-  javac -d ../bin echoserver/*.java
-  java -cp ../bin echoserver.EchoServer &
-  sleep 1  # Allow the server to start up
-  cd ../test || exit 1
+  cd "$BATS_TEST_DIRNAME/../bin" || exit 1
+  # Start the server in the background on a specific port
+  java echoserver.EchoServer 12345 &
+  SERVER_PID=$!
+  sleep 2  # Allow server time to start
 }
 
 teardown() {
-  rm -rf "$BATS_TMPDIR"
-  kill %1
-  sleep 1  # Ensure the server shuts down completely
+  # Kill the server process if it's still running
+  if ps -p $SERVER_PID > /dev/null; then
+    kill $SERVER_PID
+    wait $SERVER_PID 2>/dev/null
+  fi
+  sleep 1  # Ensure the server has stopped completely
 }
 
-
 @test "Your client/server pair handles a small bit of text" {
-  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
-  java echoserver.EchoClient < ../test/etc/textTest.txt > "$BATS_TMPDIR"/textTest.txt
-  run diff ../test/etc/textTest.txt "$BATS_TMPDIR"/textTest.txt
-  cd ../test
+  cd "$BATS_TEST_DIRNAME/../bin" || exit 1
+  java echoserver.EchoClient 12345 < "$BATS_TEST_DIRNAME/etc/textTest.txt" > "$BATS_TMPDIR/textTest.txt"
+  run diff "$BATS_TEST_DIRNAME/etc/textTest.txt" "$BATS_TMPDIR/textTest.txt"
   [ "$status" -eq 0 ]
 }
 
 @test "Your client/server pair handles a large chunk of text" {
-  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
-  java echoserver.EchoClient < ../test/etc/words.txt > "$BATS_TMPDIR"/words.txt
-  run diff ../test/etc/words.txt "$BATS_TMPDIR"/words.txt
-  cd ../test
+  cd "$BATS_TEST_DIRNAME/../bin" || exit 1
+  java echoserver.EchoClient 12345 < "$BATS_TEST_DIRNAME/etc/words.txt" > "$BATS_TMPDIR/words.txt"
+  run diff "$BATS_TEST_DIRNAME/etc/words.txt" "$BATS_TMPDIR/words.txt"
   [ "$status" -eq 0 ]
 }
 
 @test "Your client/server pair handles binary content" {
-  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
-  java echoserver.EchoClient < ../test/etc/pumpkins.jpg > "$BATS_TMPDIR"/pumpkins.jpg
-  run diff ../test/etc/pumpkins.jpg "$BATS_TMPDIR"/pumpkins.jpg
-  cd ../test
+  cd "$BATS_TEST_DIRNAME/../bin" || exit 1
+  java echoserver.EchoClient 12345 < "$BATS_TEST_DIRNAME/etc/pumpkins.jpg" > "$BATS_TMPDIR/pumpkins.jpg"
+  run diff "$BATS_TEST_DIRNAME/etc/pumpkins.jpg" "$BATS_TMPDIR/pumpkins.jpg"
   [ "$status" -eq 0 ]
 }

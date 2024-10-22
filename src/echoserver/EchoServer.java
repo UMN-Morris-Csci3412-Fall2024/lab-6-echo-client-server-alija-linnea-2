@@ -4,7 +4,8 @@ import java.net.*;
 
 public class EchoServer {
     public static void main(String[] args) {
-        int port = 12345;  // Define your port number
+        // Set default port to 12345 or use the specified port from command line
+        int port = args.length > 0 ? Integer.parseInt(args[0]) : 12345;
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server is listening on port " + port);
@@ -23,7 +24,7 @@ public class EchoServer {
 }
 
 class EchoHandler extends Thread {
-    private Socket socket;
+    private final Socket socket;
 
     public EchoHandler(Socket socket) {
         this.socket = socket;
