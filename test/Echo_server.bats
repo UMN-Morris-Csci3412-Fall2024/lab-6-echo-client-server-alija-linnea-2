@@ -2,11 +2,20 @@
 
 setup() {
   BATS_TMPDIR=$(mktemp --directory)
+  cd ../src || exit 1
+  rm -f echoserver/*.class
+  javac -d ../bin echoserver/EchoServer.java
+  java -cp ../bin echoserver.EchoServer &
+  sleep 1  # Allow the server to start up
+  cd ../test || exit 1
 }
 
 teardown() {
   rm -rf "$BATS_TMPDIR"
+  kill %1
+  sleep 1  # Ensure the server shuts down completely
 }
+
 
 @test "Your server code compiles" {
   cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/src

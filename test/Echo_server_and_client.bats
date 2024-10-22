@@ -2,12 +2,12 @@
 
 setup() {
   BATS_TMPDIR=$(mktemp --directory)
-  cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/src
+  cd ../src || exit 1
   rm -f echoserver/*.class
   javac -d ../bin echoserver/*.java
   java -cp ../bin echoserver.EchoServer &
   sleep 1  # Allow the server to start up
-  cd ../test
+  cd ../test || exit 1
 }
 
 teardown() {
@@ -15,6 +15,7 @@ teardown() {
   kill %1
   sleep 1  # Ensure the server shuts down completely
 }
+
 
 @test "Your client/server pair handles a small bit of text" {
   cd /Users/alijawosti/lab-6-echo-client-server-alija-linnea-2/bin
