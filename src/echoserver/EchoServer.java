@@ -1,52 +1,45 @@
 package echoserver;
-import java.io.*;
+
 import java.net.*;
+import java.io.*;
 
 public class EchoServer {
+    public static final int portNumber = 6013;
+
     public static void main(String[] args) {
-        // Set default port to 12345 or use the specified port from command line
-        int port = args.length > 0 ? Integer.parseInt(args[0]) : 12345;
+        try {
+            // Start listening on the specified port
+            ServerSocket serverSock = new ServerSocket(portNumber);
 
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Server is listening on port " + port);
-
+            // Run forever, which is common for server style services
             while (true) {
-                Socket socket = serverSocket.accept();
-                System.out.println("New client connected");
+                // Wait until someone connects
+                Socket client = serverSock.accept();
 
-                // Handle client communication
-                new EchoHandler(socket).start();
+                try (DataInputStream in = new DataInputStream(client.getInputStream());
+                     DataOutputStream out = new DataOutputStream(client.getOutputStream())) {
+
+                    // Read and write bytes until the end of the stream
+                    while (true) {
+                        try {
+                            byte inputByte = in.readByte(); // Read a byte
+                            out.writeByte(inputByte); // Echo the byte back
+                        } catch (EOFException e) {
+                            // End of stream reached, break the loop
+                            break;
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Exception during communication: " + e.getMessage());
+                } finally {
+                    client.close(); 
+                    serverSock.close(); //why did that fix the error on the large chunk of text?
+                }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-class EchoHandler extends Thread {
-    private final Socket socket;
-
-    public EchoHandler(Socket socket) {
-        this.socket = socket;
-    }
-
-    public void run() {
-        try (InputStream in = socket.getInputStream();
-             OutputStream out = socket.getOutputStream()) {
-
-            int data;
-            while ((data = in.read()) != -1) {
-                out.write(data);
-                out.flush();  // Ensure data is sent immediately
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            System.out.println("Exception caught when trying to listen on port "
+                + portNumber + " or listening for a connection");
+            System.out.println(e.getMessage());
         }
     }
 }
