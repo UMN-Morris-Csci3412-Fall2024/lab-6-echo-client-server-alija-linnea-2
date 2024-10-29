@@ -16,21 +16,21 @@ public class EchoServer {
                 // Wait until someone connects
                 Socket client = serverSock.accept();
 
-                try (DataInputStream in = new DataInputStream(client.getInputStream());
-                     DataOutputStream out = new DataOutputStream(client.getOutputStream())) {
+                try{ 
+                  DataInputStream in = new DataInputStream(client.getInputStream());
+                    DataOutputStream out = new DataOutputStream(client.getOutputStream()); 
 
                     // Read and write bytes until the end of the stream
                     while (true) {
                         try {
                             byte inputByte = in.readByte(); // Read a byte
                             out.writeByte(inputByte); // Echo the byte back
+                            System.out.println(inputByte);
                         } catch (EOFException e) {
                             // End of stream reached, break the loop
                             break;
                         }
-                    }
-                } catch (IOException e) {
-                    System.out.println("Exception during communication: " + e.getMessage());
+                }
                 } finally {
                     client.close(); 
                     serverSock.close(); //why did that fix the error on the large chunk of text?
@@ -42,6 +42,5 @@ public class EchoServer {
             System.out.println(e.getMessage());
         }
     }
-}
-
+  }
 
